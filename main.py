@@ -8,7 +8,7 @@ import torch.optim as optim
 from utils import load_vocab, read_corpus, load_model, save_model,build_input,Tjson
 from torch.utils.data import TensorDataset
 from torch.utils.data import DataLoader
-import fire
+# import fire
 
 def test():
     """
@@ -74,7 +74,7 @@ def test():
 
 def train(**kwargs):
     config = Config()
-    config.update(**kwargs)
+    # config.update(**kwargs)
     print('当前设置为:\n', config)
     # if config.use_cuda:
     #     torch.cuda.set_device(config.gpu)
@@ -161,7 +161,8 @@ def dev(model, dev_loader, epoch, config):
 
 
 if __name__ == '__main__':
-    fire.Fire()
+    # fire.Fire()
+    train()
     # test()
 
 
