@@ -37,8 +37,10 @@ class CRF(nn.Module):
         init_transitions = torch.zeros(self.target_size+2, self.target_size+2)
         init_transitions[:, self.START_TAG_IDX] = -1000.
         init_transitions[self.END_TAG_IDX, :] = -1000.
-        if self.use_cuda:
-            init_transitions = init_transitions.cuda()
+        # if self.use_cuda:
+        #     init_transitions = init_transitions.cuda()
+        device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        init_transitions.to(device)
         self.transitions = nn.Parameter(init_transitions)
 
     def _forward_alg(self, feats, mask=None):
@@ -144,8 +146,10 @@ class CRF(nn.Module):
             self.transitions.view(1, tag_size, tag_size).expand(batch_size, tag_size, tag_size)
         _, last_bp = torch.max(last_values, 1)
         pad_zero = Variable(torch.zeros(batch_size, tag_size)).long()
-        if self.use_cuda:
-            pad_zero = pad_zero.cuda()
+        # if self.use_cuda:
+        #     pad_zero = pad_zero.cuda()
+        device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        pad_zero  =pad_zero.to(device)
         back_points.append(pad_zero)
         back_points = torch.cat(back_points).view(seq_len, batch_size, tag_size)
 
@@ -158,8 +162,11 @@ class CRF(nn.Module):
         back_points = back_points.transpose(1, 0).contiguous()
 
         decode_idx = Variable(torch.LongTensor(seq_len, batch_size))
-        if self.use_cuda:
-            decode_idx = decode_idx.cuda()
+        # if self.use_cuda:
+        #     decode_idx = decode_idx.cuda()
+        device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        decode_idx = decode_idx.to(device)
+
         decode_idx[-1] = pointer.data
         for idx in range(len(back_points)-2, -1, -1):
             pointer = torch.gather(back_points[idx], 1, pointer.contiguous().view(batch_size, 1))
@@ -187,8 +194,10 @@ class CRF(nn.Module):
         tag_size = scores.size(-1)
 
         new_tags = Variable(torch.LongTensor(batch_size, seq_len))
-        if self.use_cuda:
-            new_tags = new_tags.cuda()
+        # if self.use_cuda:
+        #     new_tags = new_tags.cuda()
+        device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        new_tags= new_tags.to(device)
         for idx in range(seq_len):
             if idx == 0:
                 new_tags[:, 0] = (tag_size - 2) * tag_size + tags[:, 0]

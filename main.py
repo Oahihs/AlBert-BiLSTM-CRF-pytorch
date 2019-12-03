@@ -76,8 +76,8 @@ def train(**kwargs):
     config = Config()
     config.update(**kwargs)
     print('当前设置为:\n', config)
-    if config.use_cuda:
-        torch.cuda.set_device(config.gpu)
+    # if config.use_cuda:
+    #     torch.cuda.set_device(config.gpu)
     print('loading corpus')
     vocab = load_vocab(config.vocab)
     label_dic = load_vocab(config.label_file)
@@ -143,8 +143,11 @@ def dev(model, dev_loader, epoch, config):
         inputs, masks, tags = batch
         length += inputs.size(0)
         inputs, masks, tags = Variable(inputs), Variable(masks), Variable(tags)
-        if config.use_cuda:
-            inputs, masks, tags = inputs.cuda(), masks.cuda(), tags.cuda()
+        # if config.use_cuda:
+        #     inputs, masks, tags = inputs.cuda(), masks.cuda(), tags.cuda()
+        device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        inputs, masks, tags = inputs.to(device), masks.to(device), tags.to(device)
+
         feats = model(inputs, masks)
         # path_score, best_path = model.crf(feats, masks.byte())
         path_score, best_path = model.crf(feats, masks.bool())
