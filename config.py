@@ -9,7 +9,7 @@ class Config(object):
         self.test_file = './data/test.txt'
         self.vocab = './data/bert/vocab.txt'
         self.max_length = 50
-        self.use_cuda = True
+        self.use_cuda = False
         self.gpu = 0
         self.batch_size = 10
         self.bert_path = './data/bert'
