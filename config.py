@@ -4,14 +4,14 @@
 class Config(object):
     def __init__(self):
         self.label_file = './data/tag.txt'
-        self.train_file = './data/train.txt'
-        self.dev_file = './data/dev.txt'
+        self.train_file = './data/train.json'
+        self.dev_file = './data/dev.json'
         self.test_file = './data/test.txt'
         self.vocab = './data/bert/vocab.txt'
-        self.max_length = 300
+        self.max_length = 50
         self.use_cuda = False
         self.gpu = 0
-        self.batch_size = 50
+        self.batch_size = 10
         self.bert_path = './data/bert'
         self.rnn_hidden = 500
         self.bert_embedding = 768
@@ -25,7 +25,7 @@ class Config(object):
         self.optim = 'Adam'
         self.load_model = False
         self.load_path = None
-        self.base_epoch = 100
+        self.base_epoch = 10
 
     def update(self, **kwargs):
         for k, v in kwargs.items():
