@@ -102,8 +102,10 @@ def train(**kwargs):
     if config.load_model:
         assert config.load_path is not None
         model = load_model(model, name=config.load_path)
-    if config.use_cuda:
-        model.cuda()
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    model.to(device)
+    # if config.use_cuda:
+    #     model.cuda()
     model.train()
     optimizer = getattr(optim, config.optim)
     optimizer = optimizer(model.parameters(), lr=config.lr, weight_decay=config.weight_decay)
@@ -116,8 +118,9 @@ def train(**kwargs):
             inputs, masks, tags = batch
             # print('inputs',inputs)
             inputs, masks, tags = Variable(inputs), Variable(masks), Variable(tags)
-            if config.use_cuda:
-                inputs, masks, tags = inputs.cuda(), masks.cuda(), tags.cuda()
+            # if config.use_cuda:
+            #     inputs, masks, tags = inputs.cuda(), masks.cuda(), tags.cuda()
+            inputs, masks, tags = inputs.to(device), masks.to(device), tags.to(device)
             feats = model(inputs, masks)
             # print("feats",feats)
             loss = model.loss(feats, masks,tags)
