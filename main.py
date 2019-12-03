@@ -48,7 +48,7 @@ def test():
             assert config.load_path is not None
             # 
             model = load_model(model, name=config.load_path)
-        model = load_model(model, name='/mnt/data/dev/github/标注数据/Bert-BiLSTM-CRF-pytorch/result/pytorch_model.bin')
+        # model = load_model(model, name='result/pytorch_model.bin')
         if config.use_cuda:
             model.cuda()
         # model.train()
