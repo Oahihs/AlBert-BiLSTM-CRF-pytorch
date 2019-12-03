@@ -11,7 +11,7 @@
 
 运行代码
 
-python main.py train --use_cuda=False --batch_size=10 
+python main.py train --use_cuda=True --batch_size=10 
 
 预测
 python main.py test  --load_path result/pytorch_model.bin

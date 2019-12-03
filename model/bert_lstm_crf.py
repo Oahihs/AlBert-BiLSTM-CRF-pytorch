@@ -47,12 +47,12 @@ class BERT_LSTM_CRF(nn.Module):
         embeds, _ = self.word_embeds(sentence, attention_mask=attention_mask, output_all_encoded_layers=False)
         hidden = self.rand_init_hidden(batch_size)
         if embeds.is_cuda:
-            print("type=========",type(hidden))
-            print("hidden",hidden)
+            # print("type=========",type(hidden))
+            # print("hidden",hidden)
             a,b =hidden
             hidden=a.cuda(),b.cuda()
             # hidden = (i.cuda() for i in hidden)
-        print("hidden gpu",hidden)
+        # print("hidden gpu",hidden)
         # print("hidden",hidden)
         lstm_out, hidden = self.lstm(embeds, hidden)
         lstm_out = lstm_out.contiguous().view(-1, self.hidden_dim*2)
