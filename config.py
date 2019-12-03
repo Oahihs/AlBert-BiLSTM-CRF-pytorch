@@ -1,5 +1,5 @@
 # coding=utf-8
-
+import torch
 
 class Config(object):
     def __init__(self):
@@ -9,7 +9,12 @@ class Config(object):
         self.test_file = './data/test.txt'
         self.vocab = './data/bert/vocab.txt'
         self.max_length = 50
-        self.use_cuda = True
+        # device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        if torch.cuda.is_available():
+            self.use_cuda = True
+        else:
+            self.use_cuda = False
+              
         self.gpu = 0
         self.batch_size = 10
         self.bert_path = './data/bert'

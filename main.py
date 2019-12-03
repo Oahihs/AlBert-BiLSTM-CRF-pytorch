@@ -8,7 +8,7 @@ import torch.optim as optim
 from utils import load_vocab, read_corpus, load_model, save_model,build_input,Tjson
 from torch.utils.data import TensorDataset
 from torch.utils.data import DataLoader
-# import fire
+import fire
 
 def test():
     """
@@ -48,7 +48,7 @@ def test():
             assert config.load_path is not None
             # 
             model = load_model(model, name=config.load_path)
-        # model = load_model(model, name='result/pytorch_model.bin')
+        # model = load_model(model, name='/mnt/data/dev/github/标注数据/Bert-BiLSTM-CRF-pytorch/result/pytorch_model.bin')
         if config.use_cuda:
             model.cuda()
         # model.train()
@@ -74,10 +74,10 @@ def test():
 
 def train(**kwargs):
     config = Config()
-    # config.update(**kwargs)
+    config.update(**kwargs)
     print('当前设置为:\n', config)
-    # if config.use_cuda:
-    #     torch.cuda.set_device(config.gpu)
+    if config.use_cuda:
+        torch.cuda.set_device(config.gpu)
     print('loading corpus')
     vocab = load_vocab(config.vocab)
     label_dic = load_vocab(config.label_file)
@@ -102,10 +102,8 @@ def train(**kwargs):
     if config.load_model:
         assert config.load_path is not None
         model = load_model(model, name=config.load_path)
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    model.to(device)
-    # if config.use_cuda:
-    #     model.cuda()
+    if config.use_cuda:
+        model.cuda()
     model.train()
     optimizer = getattr(optim, config.optim)
     optimizer = optimizer(model.parameters(), lr=config.lr, weight_decay=config.weight_decay)
@@ -118,9 +116,8 @@ def train(**kwargs):
             inputs, masks, tags = batch
             # print('inputs',inputs)
             inputs, masks, tags = Variable(inputs), Variable(masks), Variable(tags)
-            # if config.use_cuda:
-            #     inputs, masks, tags = inputs.cuda(), masks.cuda(), tags.cuda()
-            inputs, masks, tags = inputs.to(device), masks.to(device), tags.to(device)
+            if config.use_cuda:
+                inputs, masks, tags = inputs.cuda(), masks.cuda(), tags.cuda()
             feats = model(inputs, masks)
             # print("feats",feats)
             loss = model.loss(feats, masks,tags)
@@ -143,11 +140,8 @@ def dev(model, dev_loader, epoch, config):
         inputs, masks, tags = batch
         length += inputs.size(0)
         inputs, masks, tags = Variable(inputs), Variable(masks), Variable(tags)
-        # if config.use_cuda:
-        #     inputs, masks, tags = inputs.cuda(), masks.cuda(), tags.cuda()
-        device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-        inputs, masks, tags = inputs.to(device), masks.to(device), tags.to(device)
-
+        if config.use_cuda:
+            inputs, masks, tags = inputs.cuda(), masks.cuda(), tags.cuda()
         feats = model(inputs, masks)
         # path_score, best_path = model.crf(feats, masks.byte())
         path_score, best_path = model.crf(feats, masks.bool())
@@ -161,8 +155,7 @@ def dev(model, dev_loader, epoch, config):
 
 
 if __name__ == '__main__':
-    # fire.Fire()
-    train()
+    fire.Fire()
     # test()
 
 
