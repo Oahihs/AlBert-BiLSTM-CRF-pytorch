@@ -90,8 +90,8 @@ if __name__ == '__main__':
         print("请手动删除")
     else:
         for f in train_files:
-            # build_dataset(f,type="all")
-                build_dataset(f,type="mini")
+            build_dataset(f,type="all")
+                # build_dataset(f,type="mini")
 
 
 
