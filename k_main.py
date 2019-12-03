@@ -72,9 +72,9 @@ def test():
                 print('words',words)
 
 
-def train(**kwargs):
+def train():
     config = Config()
-    config.update(**kwargs)
+    # config.update(**kwargs)
     print('当前设置为:\n', config)
     if config.use_cuda:
         torch.cuda.set_device(config.gpu)
