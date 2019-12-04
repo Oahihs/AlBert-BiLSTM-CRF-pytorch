@@ -38,8 +38,11 @@ def build_dataset(train_file,type="all"):
             }
             predicate[n['predicate']].append(one)
         # print(predicate)
-        p_n=range(1,20)
-        # p_n=random.shuffle(p_n)
+        p_n=list(range(20))
+        # print("p_n",p_n)
+        random.shuffle(p_n)
+        # print("p_n",p_n)
+        
         label = ["O"]*len(text)
         for i,p in enumerate( predicate):
             # print('p',p)
