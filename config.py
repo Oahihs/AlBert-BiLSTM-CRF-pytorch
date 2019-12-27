@@ -22,7 +22,7 @@ class Config(object):
         self.albert_path = './data/albert'
         self.rnn_hidden = 500
         self.bert_embedding = 768
-        self.albert_embedding= 312
+        self.albert_embedding= 768
         self.dropout1 = 0.5
         self.dropout_ratio = 0.5
         self.rnn_layer = 1

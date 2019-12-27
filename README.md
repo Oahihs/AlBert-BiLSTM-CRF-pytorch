@@ -25,12 +25,13 @@ python main.py test --load_path data/bert/run
 
 albert 版本
 
-python al_main.py train --use_cuda=False --batch_size=10
+ <!-- 大约6.5g内存 -->
+ <!-- 使用base模型 -->
+ <!-- 下载模型 https://www.kaggle.com/terrychanorg/pytorch-albert-zh -->
+python al_main.py train --use_cuda=False --batch_size=50 --base_epoch=1
 
 
-
-
-
+python al_main.py test  --load_path result/pytorch_model.bin --use_cuda=False 
 
 
 pytorch.bin  百度网盘链接   链接:https://pan.baidu.com/s/160cvZXyR_qdAv801bDY2mQ 提取码:q67r 
