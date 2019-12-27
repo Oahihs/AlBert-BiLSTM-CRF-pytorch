@@ -7,7 +7,7 @@ result
 data/
 data/bert
 tmp/*
-model/*
+
 
 *.*~
 tensorboard_summary/*
