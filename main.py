@@ -10,12 +10,12 @@ from torch.utils.data import TensorDataset
 from torch.utils.data import DataLoader
 import fire
 
-def test():
+def test(**kwargs):
     """
     执行预测
     """
     config = Config()
-    # config.update(**kwargs)
+    config.update(**kwargs)
     print('当前设置为:\n', config)
     if config.use_cuda:
         torch.cuda.set_device(config.gpu)
@@ -62,14 +62,22 @@ def test():
             feats = model(inputs)
             # print("feats",feats)
             path_score, best_path = model.crf(feats, masks.bool())
-            print("feats",path_score, best_path)
+            # print("feats",path_score, best_path)
             for item in best_path.numpy():
                 # print(item.tolist())
                 words=[]
                 for i,id in enumerate( item.tolist()):
                     word_id=inputs.numpy().tolist()[0][i]
-                    words.append((list(vocab)[word_id],list(label_dic)[id]))
-                print('words',words)
+                    l=list(label_dic)[id]
+                    w=list(vocab)[word_id]
+                    # print(l)
+                    print(w,l,l.startswith("M_"))
+                    # if l.startswith("M"):
+                    #     words.append((w,l))
+                    #     print(w)
+                    # else:
+                    #     print("****")
+                # print('words',words)
 
 
 def train(**kwargs):

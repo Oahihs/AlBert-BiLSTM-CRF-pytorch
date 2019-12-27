@@ -4,7 +4,7 @@ __pycache__/
 *$py.class
 
 result
-data/*.json
+data/
 data/bert
 tmp/*
 model/*

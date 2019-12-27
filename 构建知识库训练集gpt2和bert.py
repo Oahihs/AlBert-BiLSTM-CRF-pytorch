@@ -39,30 +39,32 @@ def build_dataset(train_file,type="all"):
             predicate[n['predicate']].append(one)
         # print(predicate)
         p_n=list(range(20))
-        # print("p_n",p_n)
-        random.shuffle(p_n)
-        # print("p_n",p_n)
-        
+        # random.shuffle(p_n)   
         label = ["O"]*len(text)
         for i,p in enumerate( predicate):
             # print('p',p)
             # print(predicate)
-            for m in predicate[p]:
-                start_a =text.find(m['subject'])
-                end_a=text.find(m['subject'])+len(m['subject'])
-                for n in range(start_a,end_a):
-                    label[n]='M_'+str(p_n[i])+'_A'
-                    pass
-                start_a =text.find(m['object'])
-                end_a=text.find(m['object'])+len(m['object'])
-                for n in range(start_a,end_a):
-                    label[n]='M_'+str(p_n[i])+'_B'
-                    pass
+            # i=0
+            i=0
+            # for m in predicate[p]:
+            #     start_a =text.find(m['subject'])
+            #     end_a=text.find(m['subject'])+len(m['subject'])
+            #     for n in range(start_a,end_a):
+            #         # label[n]='M_A_'+str(p_n[i])
+            #         label[n]='M_A'
+            #         pass
+            #     start_a =text.find(m['object'])
+            #     end_a=text.find(m['object'])+len(m['object'])
+            #     for n in range(start_a,end_a):
+            #         # label[n]='M_B_'+str(p_n[i])
+            #         label[n]='M_A'
+            #         pass
             start_p =text.find(p)
             end_p=text.find(p)+len(p)
             if start_p>=0:
                 for n in range(start_p,end_p):
-                    label[n]='M_'+str(p_n[i])+'_P'
+                    # label[n]='M_P_'+str(p_n[i])
+                    label[n]='M_P'
                     pass
         # print(label)
         if len(list(text))==len(list(label)):
@@ -74,13 +76,48 @@ def build_dataset(train_file,type="all"):
     if type=="all":
         pass
     elif type=="mini":
-        data=data[:2000]
+        data=data[:200]
 
     f=int(len(data)*0.85)
     tjson_save.save(data=data[:f])
     dev_json_save.save(data=data[f:])
 
  
+
+def build_dataset_gpt2(train_file,type="all"):
+    """
+    百度训练集
+    train_file 文件路径
+    type="all" 或者mini 
+    mini
+    """
+    tjson=Tjson(file_path=train_file)
+    tjson_save=Tjson(file_path="data/train.json")
+    dev_json_save=Tjson(file_path="data/dev.json")
+    data=[]
+    f = open('data/gpt2kg.txt','a')
+    for item in tqdm(tjson.load()):
+        
+        text= item['text']
+        # print(text)
+        # print(item['spo_list'])
+        predicate={}
+        kg=" [KGS] "
+        for n in item['spo_list']:
+            # predicate[n['predicate']]=[]
+            # print(n)
+            # print(n)
+            kg=kg+' [KG] '+n['subject']+","+n['predicate']+","+n['object']+" [/KG] "
+
+
+            pass
+        
+        # data=text+str(item['spo_list'])
+        data=text+kg+" [KGE] "
+        print("***"*10)
+        print(data)
+        f.write(data+'\n\n')
+    f.close()
 
 
 if __name__ == '__main__':
@@ -93,8 +130,9 @@ if __name__ == '__main__':
         print("请手动删除")
     else:
         for f in train_files:
-            build_dataset(f,type="all")
-                # build_dataset(f,type="mini")
+            # build_dataset(f,type="all")
+            build_dataset(f,type="mini")
+            # build_dataset_gpt2(f,type="mini")
 
 
 

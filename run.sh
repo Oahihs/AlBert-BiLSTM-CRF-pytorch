@@ -1,6 +1,8 @@
 CURRENT_DIR=`pwd`
 
-python main.py train
+# python main.py train
+python main.py train --use_cuda=False --batch_size=10
+
 # export BERT_BASE_DIR=$CURRENT_DIR/prev_trained_model/albert_tiny
 # export DATA_DIR=$CURRENT_DIR/dataset
 # export OUTPUR_DIR=$CURRENT_DIR/outputs

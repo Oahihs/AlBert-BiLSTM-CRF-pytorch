@@ -1,0 +1,7 @@
+<pad>
+M_A
+M_P
+M_B
+O
+<start>
+<eos>
