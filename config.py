@@ -7,7 +7,8 @@ class Config(object):
         self.train_file = './data/train.json'
         self.dev_file = './data/dev.json'
         self.test_file = './data/test.txt'
-        self.vocab = './data/bert/vocab.txt'
+        # self.vocab = './data/bert/vocab.txt'
+        self.vocab = './data/albert/vocab.txt'
         self.max_length = 50
         # device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         if torch.cuda.is_available():
@@ -18,8 +19,10 @@ class Config(object):
         self.gpu = 0
         self.batch_size = 10
         self.bert_path = './data/bert'
+        self.albert_path = './data/albert'
         self.rnn_hidden = 500
         self.bert_embedding = 768
+        self.albert_embedding= 312
         self.dropout1 = 0.5
         self.dropout_ratio = 0.5
         self.rnn_layer = 1

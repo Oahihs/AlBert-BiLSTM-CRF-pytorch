@@ -3,7 +3,6 @@ import torch
 import torch.nn as nn
 from torch.autograd import Variable
 from config import Config
-from model import BERT_LSTM_CRF
 from model import ALBERT_LSTM_CRF
 import torch.optim as optim
 from utils import load_vocab, read_corpus, load_model, save_model,build_input,Tjson
@@ -44,7 +43,7 @@ def test(**kwargs):
         input_dataset = TensorDataset(input_ids, input_masks)
         input_loader = DataLoader(input_dataset, shuffle=True, batch_size=config.batch_size)
 
-        model = BERT_LSTM_CRF(config.bert_path, tagset_size, config.bert_embedding, config.rnn_hidden, config.rnn_layer, dropout_ratio=config.dropout_ratio, dropout1=config.dropout1, use_cuda=config.use_cuda)
+        model = ALBERT_LSTM_CRF(config.albert_path, tagset_size, config.albert_embedding, config.rnn_hidden, config.rnn_layer, dropout_ratio=config.dropout_ratio, dropout1=config.dropout1, use_cuda=config.use_cuda)
         if config.load_model:
             assert config.load_path is not None
             # 
@@ -107,7 +106,7 @@ def train(**kwargs):
 
     dev_dataset = TensorDataset(dev_ids, dev_masks, dev_tags)
     dev_loader = DataLoader(dev_dataset, shuffle=True, batch_size=config.batch_size)
-    model = BERT_LSTM_CRF(config.bert_path, tagset_size, config.bert_embedding, config.rnn_hidden, config.rnn_layer, dropout_ratio=config.dropout_ratio, dropout1=config.dropout1, use_cuda=config.use_cuda)
+    model = ALBERT_LSTM_CRF(config.albert_path, tagset_size, config.albert_embedding, config.rnn_hidden, config.rnn_layer, dropout_ratio=config.dropout_ratio, dropout1=config.dropout1, use_cuda=config.use_cuda)
     if config.load_model:
         assert config.load_path is not None
         model = load_model(model, name=config.load_path)

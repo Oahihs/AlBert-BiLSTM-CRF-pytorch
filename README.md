@@ -16,7 +16,21 @@ python main.py train --use_cuda=False --batch_size=10
 预测
 python main.py test  --load_path result/pytorch_model.bin
 
+python main.py test  --load_path result/pytorch_model.bin --use_cuda=False 
+
+
 python main.py test --load_path data/bert/run
+
+
+
+albert 版本
+
+python al_main.py train --use_cuda=False --batch_size=10
+
+
+
+
+
 
 
 pytorch.bin  百度网盘链接   链接:https://pan.baidu.com/s/160cvZXyR_qdAv801bDY2mQ 提取码:q67r 

@@ -45,6 +45,8 @@ class BERT_LSTM_CRF(nn.Module):
         batch_size = sentence.size(0)
         seq_length = sentence.size(1)
         embeds, _ = self.word_embeds(sentence, attention_mask=attention_mask, output_all_encoded_layers=False)
+        # print(embeds)
+        # print(len(embeds))
         hidden = self.rand_init_hidden(batch_size)
         if embeds.is_cuda:
             # print("type=========",type(hidden))
