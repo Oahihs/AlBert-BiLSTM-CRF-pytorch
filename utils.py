@@ -144,7 +144,9 @@ def load_model(model, path='result', **kwargs):
             name = os.path.join(path, content)
     else:
         name=kwargs['name']
-        name = os.path.join(path,name)
+        # name = os.path.join(path,name)
+        name = os.path.join(name)
+    # print('name',name)
     model.load_state_dict(torch.load(name, map_location=lambda storage, loc: storage))
     # print('load model {} successfully'.format(name))
     return model

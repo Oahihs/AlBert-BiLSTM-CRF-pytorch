@@ -23,9 +23,6 @@ def test(**kwargs):
     vocab = load_vocab(config.vocab)
     label_dic = load_vocab(config.label_file)
     tagset_size = len(label_dic)
-    # content=["柯 基 犬 是 个 小 狗 子"]
-    content=list("威尔士柯基犬（welsh corgi pembroke）是一种小型犬，它们的胆子很大，也相当机警，能高度警惕地守护家园，是最受欢迎的小型护卫犬之一。")
-    content=" ".join(content)
 
     dev_json_save=Tjson(file_path="data/dev.json")
     data=[]
@@ -70,14 +67,17 @@ def test(**kwargs):
                     word_id=inputs.numpy().tolist()[0][i]
                     l=list(label_dic)[id]
                     w=list(vocab)[word_id]
+                    words.append((w,l))
                     # print(l)
-                    print(w,l,l.startswith("M_"))
+                    # print(w,l,l.startswith("M_"))
+                    
                     # if l.startswith("M"):
-                    #     words.append((w,l))
+                    #     
                     #     print(w)
                     # else:
                     #     print("****")
                 # print('words',words)
+                print('words',words)
 
 
 def train(**kwargs):
