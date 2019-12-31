@@ -5,10 +5,28 @@ from torch.autograd import Variable
 from config import Config
 from model import ALBERT_LSTM_CRF
 import torch.optim as optim
-from utils import load_vocab, read_corpus, load_model, save_model,build_input,Tjson
+from automarker import load_vocab, read_corpus, load_model, save_model,build_input,Tjson
 from torch.utils.data import TensorDataset
 from torch.utils.data import DataLoader
 import fire
+
+from marker import Pre
+
+
+
+def pre_one(**kwargs):
+    # content="柯基犬性格活泼可爱，但是饲养柯基犬会有着六个坏处，你还敢饲养柯基犬吗？"
+    # print(**kwargs)
+    P=Pre()
+    result=P.pre([kwargs['text']])
+    print(result)
+    
+
+
+
+
+
+
 
 def test(**kwargs):
     """

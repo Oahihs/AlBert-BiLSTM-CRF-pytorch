@@ -33,6 +33,8 @@ python al_main.py train --use_cuda=False --batch_size=50 --base_epoch=1
 
 python al_main.py test  --load_path result/pytorch_model.bin --use_cuda=False  --load_model=Ture
 
+预测
+python al_main.py pre_one --text "柯基犬真是和牛逼" 
 
 pytorch.bin  百度网盘链接   链接:https://pan.baidu.com/s/160cvZXyR_qdAv801bDY2mQ 提取码:q67r 
 
