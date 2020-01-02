@@ -28,6 +28,7 @@ class Pre:
             "load_path":"result/pytorch_model.bin",
             "load_model":True,
             "use_cuda":False,
+            "max_length":200
         }
         
         config = Config()
@@ -120,26 +121,34 @@ class Pre:
                     words.append((w,l))
 
                 # print('words',words)
-                wd={"type":None,"words":[]}
+                wd={"type":None,"words":None}
                 wd_list=[]
                 for w,l in words:
                     # print(wd)
-                    if l.startswith("B-"): 
+                    if l.startswith("B-"):
+                        wd_aa=[]
                         wd["type"]=l.split("B-")[1]
-                        wd["words"].append(w)
+                        wd_aa.append(w)
                     elif l.startswith("M-"):
-                        wd["type"]=l.split("M-")[1]
-                        wd["words"].append(w)
+                        wd_aa.append(w)
                     elif l.startswith("E-"):
-                        wd["type"]=l.split("E-")[1]
-                        wd["words"].append(w)
+                        wd_aa.append(w)
+                        wd['words']=''.join(wd_aa)
                         wd_list.append(wd)
-                        wd={"type":None,"words":[]}
+                        wd={"type":None,"words":None}
                     elif l.startswith("S-"):
+                        wd_aa=[]
                         wd["type"]=l.split("S-")[1]
-                        wd["words"].append(w)
+                        wd_aa.append(w)
+                        
                         wd_list.append(wd)
-                        wd={"type":None,"words":[]}
+                        # wd={"type":None,"words":''.join(wd_aa)}
+                        wd['words']=''.join(wd_aa)
+                        wd={"type":None,"words":None}
+                    else:
+                        wd={"type":None,"words":None}
+                        pass
+
                 # print('wd_list',wd_list)
                 # print(i)
                 output.append((content_dict[i],wd_list))

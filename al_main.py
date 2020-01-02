@@ -3,14 +3,14 @@ import torch
 import torch.nn as nn
 from torch.autograd import Variable
 from config import Config
-from model import ALBERT_LSTM_CRF
+from automarker import ALBERT_LSTM_CRF
 import torch.optim as optim
 from automarker import load_vocab, read_corpus, load_model, save_model,build_input,Tjson
 from torch.utils.data import TensorDataset
 from torch.utils.data import DataLoader
 import fire
 
-from marker import Pre
+from automarker import Pre
 
 
 
