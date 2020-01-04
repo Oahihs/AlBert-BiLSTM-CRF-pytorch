@@ -8,6 +8,7 @@ from sqlitedict import SqliteDict
 import threading
 import time
 from tqdm import tqdm
+import os
 
 """
 知识保存到数据库
@@ -22,7 +23,57 @@ class Kg:
     def __init__(self,db="tadta/kg.db"):
         self.db =tkit.Db(dbpath=db)
         self.tdb=tkit.LDB(path="tdata/lvkg.db")
+        self.sdir="tdata/search/"
         self.tdb.load("kg")
+        self.ss=   tkit.Search()
+        self.ss.ix_path=self.sdir
+    def add_search(self,word):
+        
+        
+        if os.path.exists(self.sdir):
+            pass
+        else:
+            
+            #初始化搜索
+            self.ss.init_search()
+        # data=[{'title':'www','content':'223这是我们增加搜索的s第武器篇文档，哈哈 ','path':'https://www.osgeo.cn/whoosh/batch.html'}]
+        tt=tkit.Text()
+        path=tt.md5(word)
+        data=[{'title':word,'content':' ','path':path}]
+        # data=[{'title':word,'path':path}]
+        # print(data)
+        self.ss.add(data)
+    def search(self,word):
+        return self.ss.find_title(word) 
+    def build_dict(self):
+        """
+        将知识库转化为结巴词典
+        """
+        with  open('tdata/kg_dict.txt','w') as f:
+            for key,item in tqdm(self.tdb.get_all()):
+                # print(one)
+                # yield key,self.tdb.str_dict(item)
+                f.write(key+'\n')
+    def build_ht_dict(self):
+        """
+        将知识库转化为HarvestText词典
+        """
+        tt=tkit.Text()
+        tt.load_ht()
+        tt.ht_model="tdata/ht_model"
+        tt.typed_words()
+        words=[]
+        for i,one in tqdm(enumerate(self.tdb.get_all())):
+            key,item=one
+            # print(one)
+            # yield key,self.tdb.str_dict(item)
+            # f.write(key+'\n')
+            words.append(key)
+            if i%1000000==0:
+                tt.add_words(words)
+        tt.add_words(words)
+
+
     def build_data(self):
         """
         将知识转化为数据库存储
@@ -111,6 +162,16 @@ class Kg:
                 # #     pass
                 # # except:
                 # #     pass
+    def get(self,word):
+        """
+        搜索
+         """
+        try:
+            return self.tdb.str_dict(self.tdb.get(word))
+        except:
+            # print(222)
+            return None
+
     def test(self):
         try:
             self.tdb.get("额哦哦")
@@ -120,6 +181,93 @@ class Kg:
         # for k,v in self.tdb.get_all():
         #     print(k,self.tdb.str_dict(v))
     def one(self,one,c):
+        """
+        保存一条数据
+        """
+        # print(one,c)
+        if len(one)==3 and len(c)<100:
+
+            # p_one=self.db.get(one[0])
+            # 加载数据
+            try:
+                p_one=self.tdb.str_dict(self.tdb.get(one[0]))
+            except:
+                p_one={one[1]:[c]}
+                # print(one[0],p_one)
+                self.tdb.put(one[0],p_one)
+                return
+                # continue
+            # print(one)
+            # print(p_one.get(one[1]))
+
+            if p_one.get(one[1])==None:
+                p_one[one[1]]={c:{'weight':0,'items':[]}}
+            elif type(p_one[one[1]])==list:
+                # self.tdb.delete(one[1])
+                del p_one[one[1]]
+            elif  p_one.get(one[1]).get(c)==None:
+                p_one[one[1]][c]={'weight':0,'items':[]}
+            else:
+                pass
+            # print(p_one)
+            self.tdb.put(one[0],p_one)
+        else:
+            print(one)
+            print( len(one))
+    def build_data_v3(self):
+        """
+        将知识转化为数据库存储
+        使用lv数据库
+        """
+        file="/mnt/data/dev/tdata/baike_triples.txt"
+        kg={}
+        predicate={}
+
+        with open(file) as f:
+            for i,line in tqdm(enumerate (f)):
+            # process(line) # 
+                # print(line.split(", "))
+                # print(line)
+                one=line.split("\t")
+                try:
+                    c=one[2].strip('\n')
+                except:
+                    pass
+                self.one(one,c)
+    def rebuild_data(self):
+        """
+        格式重新转化
+
+        """
+        for key,item in tqdm(self.kg_all()):
+            # print(key,self.get(key))
+            root={}
+            # print(type())
+            k=self.tdb.str_dict(self.tdb.get(key))
+            if k==None:
+                continue
+            for p in k.keys():
+                # print(p)
+                root[p]={}
+                if len(k[p])>=1 and type(k[p])==list:
+                    for it in k[p]:
+                        root[p][it]={'weight':0,'items':[]}
+                else:
+                    root[p][k[p]]={'weight':0,'items':[]}
+
+            # print(root)
+            self.tdb.put(key,root)    
+
+                # p
+            # kg.add_search(key)                    
+    def kg_all(self):
+        # kgdict = 
+        #可遍历数据
+        return self.tdb.get_all()
+        # for key, value in self.tdb.get_all():
+        #     yield bytes.decode(key), self.tdb.str_dict(value)
+            # print()
+    def one_v2(self,one,c):
         # print(one,c)
         if len(one)==3 and len(c)<40:
 
@@ -146,35 +294,7 @@ class Kg:
                     p_one[one[1]].append(c)
             # 保存数据
             # print(one[0],p_one)
-            self.tdb.put(one[0],p_one)    
-    def build_data_v3(self):
-        """
-        将知识转化为数据库存储
-        使用lv数据库
-        """
-        file="/mnt/data/dev/tdata/baike_triples.txt"
-        kg={}
-        predicate={}
-
-        with open(file) as f:
-            for i,line in tqdm(enumerate (f)):
-            # process(line) # 
-                # print(line.split(", "))
-                # print(line)
-                one=line.split("\t")
-                try:
-                    c=one[2].strip('\n')
-                except:
-                    pass
-                self.one(one,c)
-                         
-    def kg_all(self):
-        # kgdict = 
-        #可遍历数据
-        for key, value in self.db.db:
-            yield key, self.db.get(key)
-            # print()
-
+            self.tdb.put(one[0],p_one)   
     def kg(self,word):
         return self.db.get(word)
     # word="别让他进来"
@@ -185,7 +305,7 @@ class Kg:
         """
         output=[]
         kg=self.kg(word)
-        print(kg)
+        # print(kg)
         if kg==None:
             return output
         else:
@@ -392,8 +512,32 @@ def replace_one(kg,key,value,se):
 if __name__ == '__main__':
 
     kg=Kg()
-    kg.build_data()
-    kg.build_data_v3()
+
+    word="美国" 
+    # print(kg.search(word))
+    for item in  kg.search(word):
+        print(item['title'],kg.get(item['title']))
+
+
+
+    # print(kg.ss.all() )
+    # for item in kg.ss.all():
+    #     print(item)
+    # ss.searcher().documents()
+    # kg.add_search("柯基犬")
+
+
+    # #关键词索引
+    for key,item in tqdm(kg.kg_all()):
+        # print(key,kg.get(key))
+        kg.add_search(key)
+
+
+
+    # kg.rebuild_data()
+
+    # kg.build_data()
+    # kg.build_data_v3()
     # # # 设置允许5个线程同时运行
     # # semaphore = threading.BoundedSemaphore(7)
     # # for key,value in tqdm(kg.kg_all()):

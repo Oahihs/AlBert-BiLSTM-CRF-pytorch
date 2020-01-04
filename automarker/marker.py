@@ -126,27 +126,33 @@ class Pre:
                 for w,l in words:
                     # print(wd)
                     if l.startswith("B-"):
+                        wd={"type":None,"words":None}
                         wd_aa=[]
                         wd["type"]=l.split("B-")[1]
                         wd_aa.append(w)
                     elif l.startswith("M-"):
-                        wd_aa.append(w)
+                        if wd["type"]==l.split("M-")[1]:
+                            wd_aa.append(w)
                     elif l.startswith("E-"):
-                        wd_aa.append(w)
-                        wd['words']=''.join(wd_aa)
-                        wd_list.append(wd)
-                        wd={"type":None,"words":None}
+                        if wd["type"]==l.split("E-")[1] and  wd["type"] !=None:
+                            wd_aa.append(w)
+                            wd['words']=''.join(wd_aa)
+                            wd_list.append(wd)
+                            # print(wd)
+                     
                     elif l.startswith("S-"):
+                        wd={"type":None,"words":None}
                         wd_aa=[]
                         wd["type"]=l.split("S-")[1]
                         wd_aa.append(w)
-                        
                         wd_list.append(wd)
+                        # print(wd)
                         # wd={"type":None,"words":''.join(wd_aa)}
                         wd['words']=''.join(wd_aa)
-                        wd={"type":None,"words":None}
+                        
                     else:
-                        wd={"type":None,"words":None}
+                        # wd_aa=[]
+                        # wd={"type":None,"words":None}
                         pass
 
                 # print('wd_list',wd_list)
