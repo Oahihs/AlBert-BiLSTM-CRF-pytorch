@@ -1,10 +1,7 @@
 # coding=utf-8
-from utils import load_vocab, read_corpus, load_model, save_model,Tjson
 from tqdm import tqdm
-#         # return ["O", "B-PER", "I-PER", "B-ORG", "I-ORG", "B-LOC", "I-LOC", "[CLS]","[SEP]"]
-#         return ["O", "B-PER", "I-PER", "B-ORG", "I-ORG", "B-LOC", "I-LOC", "X","[CLS]","[SEP]"]
 import Terry_toolkit as tkit
-from sqlitedict import SqliteDict
+# from sqlitedict import SqliteDict
 import threading
 import time
 from tqdm import tqdm

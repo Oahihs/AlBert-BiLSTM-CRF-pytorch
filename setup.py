@@ -19,9 +19,47 @@ long_description="""
 这里是说明
 用于自动标记文本内容
 使用albert
+
+自动标记文本
+自动会下载模型
+
+可自己训练
+
+
+~~~
+
+# 安装
+
+
+pip install tkitMarker  -i https://pypi.org/simple
+
+
+
+
+from tkitMarker import *
+
+def pre_one():
+
+    content="柯基犬性格活泼可爱，但是饲养柯基犬会有着六个坏处，你还敢饲养柯基犬吗？"
+
+    P=Pre()
+
+    result=P.pre([content])
+
+    print(result)
+    
+
+
+
+
+
+
+
+
+
 """
 setup(
-    name='AutoMarker',
+    name='tkitMarker',
     version='0.0.1.2',
     description='Terry Auto Marker',
     author='Terry Chan',
@@ -33,13 +71,13 @@ setup(
     install_requires=[
         'transformers==2.3.0',
         'torch==1.3.1',
-        'ipdb==0.12.2'
-        
-
-
+        'ipdb==0.12.2',
+        # 'requests==2.22.0',
+        'tkitFile==0.0.1.2',
+        'tkitWeb==0.0.1.0'
 
     ],
-    packages=['automarker'])
+    packages=['tkitMarker'])
     # install_requires=[
     #     # asn1crypto==0.24.0
     #     # beautifulsoup4==4.7.1
@@ -77,6 +115,7 @@ setup(
 
     #install_requires=['jieba'])
 """
+pip freeze > requirements.txt
 python3 setup.py sdist
 #python3 setup.py install
 python3 setup.py sdist upload

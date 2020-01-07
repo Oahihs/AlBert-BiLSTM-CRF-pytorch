@@ -139,7 +139,7 @@ class FindKg:
         
         for sentence in tqdm(sents):
          
-            # print(sentence)
+            print(sentence)
             data=self.auto_mark(sentence)
             # print(data)
             if len(data)==0:
@@ -176,11 +176,11 @@ class FindKg:
 
 
 
-# FindKg().run()
+FindKg().run()
 
-text="""'夸奥蒂特兰是墨西哥的城市，由墨西哥州负责管辖，位于该国南部，面积42平方公里，海拔高度2,250米，主要经济活动有工业和商业，2010年人口1450万人"""
-data=FindKg().auto_mark(text)
-print(data)
+# text="""'夸奥蒂特兰是墨西哥的城市，由墨西哥州负责管辖，位于该国南部，面积42平方公里，海拔高度2,250米，主要经济活动有工业和商业，2010年人口1450万人"""
+# data=FindKg().auto_mark(text)
+# print(data)
 
 
 

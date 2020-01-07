@@ -9,8 +9,10 @@ from utils import load_vocab, read_corpus, load_model, save_model,build_input,Tj
 from torch.utils.data import TensorDataset
 from torch.utils.data import DataLoader
 import fire
-
-
+import tkitWeb
+import tkitFile
+# import requests
+import os
 
 
 class Pre:
@@ -24,24 +26,51 @@ class Pre:
     >>>[('柯基犬真是和牛逼', [{'type': '实体', 'words': ['柯', '基', '犬']}])]  
     """
     def __init__(self):
+
+        self.model_version='v0.1'
         self.args={
-            "load_path":"result/pytorch_model.bin",
+            "load_path":'tkitfiles/'+self.model_version+"/pytorch_model.bin",
             "load_model":True,
             "use_cuda":False,
             "max_length":200
-        }
-        
+        }  
         config = Config()
         config.update_json(self.args)
         self.config=config
-        print( self.config)
+        # print( self.config)
         self.load_model()
+    def download_model(self):
+        """自动下载模型"""
+        tfile=tkitFile.File()
+        tfile.mkdir('tkitfiles/')
+        tfile.mkdir('tkitfiles/'+self.model_version)
+        th=tkitWeb.Http() 
+        # th.test()
+        # 下载文件
+        url="http://cdn.terrychan.org/model/tkit/tkitMarker/"+self.model_version+"/pytorch_model.bin"
+        name="pytorch_model.bin"
+        data=th.download(url,name,dirname='tkitfiles/'+self.model_version)
+        # print(data)
+
+        url="http://cdn.terrychan.org/model/tkit/tkitMarker/"+self.model_version+"/config.json"
+        name="config.json"
+        data=th.download(url,name,dirname='tkitfiles/'+self.model_version)
+
+        url="http://cdn.terrychan.org/model/tkit/tkitMarker/"+self.model_version+"/vocab.txt"
+        name="vocab.txt"
+        data=th.download(url,name,dirname='tkitfiles/'+self.model_version)
+        # print(data)
 
     def load_model(self):
         """
         加载模型
         """
-
+        #下载模型
+        if os.path.exists('tkitfiles/'+self.model_version+"/pytorch_model.bin") and  os.path.exists('tkitfiles/'+self.model_version+"/config.json") and  os.path.exists('tkitfiles/'+self.model_version+"/vocab.txt"):
+            pass
+        else:
+            print("缺少模型，自动下载")   
+            self.download_model()
         # config = Config()
         # config.update_json(self.args)
         config=self.config
