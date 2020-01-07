@@ -60,7 +60,7 @@ def pre_one():
 """
 setup(
     name='tkitMarker',
-    version='0.0.1.2',
+    version='0.0.1.6',
     description='Terry Auto Marker',
     author='Terry Chan',
     author_email='napoler2008@gmail.com',
@@ -77,6 +77,7 @@ setup(
         'tkitWeb==0.0.1.0'
 
     ],
+    # package_dir=[],
     packages=['tkitMarker'])
     # install_requires=[
     #     # asn1crypto==0.24.0

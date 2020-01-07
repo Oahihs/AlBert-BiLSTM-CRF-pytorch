@@ -2,10 +2,10 @@
 import torch
 import torch.nn as nn
 from torch.autograd import Variable
-from config import Config
-from model import ALBERT_LSTM_CRF
+from .config import Config
+from .model import ALBERT_LSTM_CRF
 import torch.optim as optim
-from utils import load_vocab, read_corpus, load_model, save_model,build_input,Tjson
+from .utils import load_vocab, read_corpus, load_model, save_model,build_input,Tjson
 from torch.utils.data import TensorDataset
 from torch.utils.data import DataLoader
 import fire
@@ -32,7 +32,11 @@ class Pre:
             "load_path":'tkitfiles/'+self.model_version+"/pytorch_model.bin",
             "load_model":True,
             "use_cuda":False,
-            "max_length":200
+            "max_length":200,
+            'vocab':'tkitfiles/'+self.model_version+"/vocab.txt",
+            'albert_path':'tkitfiles/'+self.model_version,
+            'label_file':'tkitfiles/'+self.model_version+"/tag.txt",
+            # 'vocab':'tkitfiles/'+self.model_version+"/vocab.txt"
         }  
         config = Config()
         config.update_json(self.args)
@@ -50,7 +54,7 @@ class Pre:
         url="http://cdn.terrychan.org/model/tkit/tkitMarker/"+self.model_version+"/pytorch_model.bin"
         name="pytorch_model.bin"
         data=th.download(url,name,dirname='tkitfiles/'+self.model_version)
-        # print(data)
+        print(data)
 
         url="http://cdn.terrychan.org/model/tkit/tkitMarker/"+self.model_version+"/config.json"
         name="config.json"
@@ -60,17 +64,43 @@ class Pre:
         name="vocab.txt"
         data=th.download(url,name,dirname='tkitfiles/'+self.model_version)
         # print(data)
+        url="http://cdn.terrychan.org/model/tkit/tkitMarker/"+self.model_version+"/tag.txt"
+        name="tag.txt"
+        data=th.download(url,name,dirname='tkitfiles/'+self.model_version)
+
 
     def load_model(self):
         """
         加载模型
         """
+        print(os.getcwd()+'/tkitfiles/'+self.model_version+"/pytorch_model.bin")
         #下载模型
-        if os.path.exists('tkitfiles/'+self.model_version+"/pytorch_model.bin") and  os.path.exists('tkitfiles/'+self.model_version+"/config.json") and  os.path.exists('tkitfiles/'+self.model_version+"/vocab.txt"):
+        if os.path.exists(os.getcwd()+'/tkitfiles/'+self.model_version+"/pytorch_model.bin"):
+            print("pytorch_model.bin")
             pass
         else:
-            print("缺少模型，自动下载")   
             self.download_model()
+        
+        if  os.path.exists(os.getcwd()+'/tkitfiles/'+self.model_version+"/config.json"):
+            print("config.json")
+            pass
+        else:
+            self.download_model()
+        if os.path.exists(os.getcwd()+'/tkitfiles/'+self.model_version+"/vocab.txt"):
+            print("vocab.txt")
+            pass
+        else:
+            self.download_model()
+        if   os.path.exists(os.getcwd()+'/tkitfiles//'+self.model_version+"/tag.txt"):
+            print("tags.txt")
+            pass
+        else:
+            self.download_model()
+            # pass
+        print("模型位置",'tkitfiles/'+self.model_version)
+        # else:
+        #     print("缺少模型，自动下载")   
+        # self.download_model()
         # config = Config()
         # config.update_json(self.args)
         config=self.config

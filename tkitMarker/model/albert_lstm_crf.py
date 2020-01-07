@@ -2,7 +2,7 @@
 # coding=utf-8
 import torch.nn as nn
 from transformers import AlbertModel
-from model import CRF
+from . import CRF
 from torch.autograd import Variable
 import torch
 import ipdb
