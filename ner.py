@@ -4,15 +4,14 @@ import sys
 # sys.path.append("../")
 from kglv import Kg
 import Terry_toolkit as tkit
-
+import jiagu
 from pyltp import Parser
 from pyltp import SementicRoleLabeller
 from pyltp import Segmentor
 from pyltp import Postagger
 from pyltp import NamedEntityRecognizer
 from tqdm import tqdm
-
-
+import json
 
 import os
 class FindKg:
@@ -114,7 +113,62 @@ class FindKg:
                     pass
                 self.kg_tmp.append((word,kg_one))
         return data
-                
+    def auto_mark_wiki(self,text):
+        """
+        自动标记wiki句子
+        """
+        # print(ner(text))
+        kg=Kg()
+        data=[]
+        self.kg_tmp=[]
+        self.tdb.load("mark") 
+        word=self.keyword
+        # print(word)
+        # print(kg.get(word))
+        tt=tkit.Text()
+        knowledge = jiagu.knowledge(text)
+        # print(knowledge)
+        # for one in  knowledge:
+        if len(knowledge)>0:
+            key=tt.md5(text+"".join("".join(knowledge)))
+            one_item={"text":text,"data":knowledge}
+            print("jiagu成功匹配知识",one_item)
+            self.tdb.put(key,one_item)
+            self.i=self.i+1
+        kg_one=kg.get(word)
+        # print(kg_one)
+        if kg_one==None or text.find(word)<0:
+            return data
+        print("句子：",text)
+        print("发现word",word)
+        for b in kg_one.keys():
+            one_p=[word]
+            # print(key)
+            # print(text.find(key))
+            if  text.find(b)>0 or b in ["是"]:
+                one_p.append(b)
+                # print(one_p)
+                if type(kg_one.get(b))==dict:
+                    for c in kg_one.get(b).keys():
+                        # print(c)
+                        # print(text.find(c))
+                        if  text.find(c)>0:
+                            # print("222")
+                            one_p.append(c) 
+                            # print(c)
+                        else:
+                            one_p=[]
+                        # print(one_p)
+                        if len(one_p)==3:
+                            # 发现一条可标记数据
+                            # print("zui",one_p)
+
+                            data.append(one_p)
+            else:
+                pass
+            self.kg_tmp.append((word,kg_one))
+        return data
+                                
         
     def one_text(self,text):
         """
@@ -123,60 +177,129 @@ class FindKg:
         tdb= self.tdb
         tfile=tkit.File()
         tt=tkit.Text()
-        tdb.load("text")
-        text_id=tt.md5(text)
-        try:
-            tdb.get(text_id)
-            # continue
-            return
-        except:
-            pass
+        # tdb.load("text")
+        # text_id=tt.md5(text)
+        # try:
+        #     tdb.get(text_id)
+        #     # continue
+        #     return
+        # except:
+        #     pass
         # sents=tt.sentence_segmentation_v1(text)
         sents=tt.sentence_segmentation(text)
         print("###"*20)
         print("句子：",len(sents))
-        tdb.load("mark")
-        
+        tdb.load("mark") 
         for sentence in tqdm(sents):
-         
-            print(sentence)
-            data=self.auto_mark(sentence)
-            # print(data)
-            if len(data)==0:
-                continue
-            else:
-                # print(data)
-                kgtext=''
-                for k in data:
-                    kgtext="".join(k)
+            # print(sentence)
+            # data=self.auto_mark(sentence)
+            try:
+                data=self.auto_mark_wiki(sentence)
+            except:
+                pass
+            if len(data)>0:
                 self.i=self.i+1
-                key=tt.md5(sentence+"".join(kgtext))
+                key=tt.md5(sentence+"".join(''.join(data)))
                 one={"text":sentence,"data":data}
-                print("知识：",self.kg_tmp)
+                # print("知识：",self.kg_tmp)
                 print("标记：",one)
                 tdb.put(key,one)
                 print("###"*20)
                 print("已经标记：",self.i)
 
+        # tdb.load("text")
+        # tdb.put(text_id,text_id)            
 
-        tdb.load("text")
-        tdb.put(text_id,text_id)            
-
-    def run(self):
-        tfile=tkit.File()
-        tt=tkit.Text()
-        # path="/home/terry/pan/github/bert/data/text/news2016zh"
-        path="/mnt/data/dev/tdata/wiki_text/"
+    def bulid_thuocl_dict(self):
+        """"
+        清华词典"""
+        file="/mnt/data/dev/github/Terry-toolkit/Terry-toolkit/Terry_toolkit/resources/THUOCL.json"
+        dict_file="tdata/thuocl.txt"
+        wikidict=open(dict_file, 'w', encoding = 'utf-8')
+        with open(file, 'r', encoding = 'utf-8') as data:
+            for it in data:
+                # print(it)
+                item=json.loads(it)
+                # print(item)
+                for t in item.keys():
+                    wikidict.write("\n".join(item[t]))
+                    wikidict.write("\n")
+        wikidict.close()
+    def bulid_wiki_dict(self):
+        """
+        构建wiki词典
+        """
+        path="/mnt/data/dev/tdata/wiki_zh"
+        dict_file="tdata/wikidict.txt"
         all_data=[]
         print("开始处理文本")
 
-        for line in tqdm( tfile.file_List(path, type='txt')):
-            text=  tfile.open_file(line)
-            self.one_text(text)
+        # for line in tqdm( tfile.file_List(path, type='txt')):
+        #     text=  tfile.open_file(line)
+        #     self.one_text(text)
+    
+        tfile=tkit.File()
+        tt=tkit.Text()
+        flist=tfile.all_path(dirname=path)
+
+        
+        wikidict=open(dict_file, 'w', encoding = 'utf-8')
+        i=0
+        for file in  tqdm(flist):
+            try:
+                print(file)
+                with open(file, 'r', encoding = 'utf-8') as data:
+                    for it in data:
+                        i=i+1
+                        # print(it)
+                        item=json.loads(it[:-1])
+
+                        # print("关键词",item['title'])
+                        wikidict.write(item['title'])
+                        wikidict.write("\n")
+   
+            except:
+                pass
+        wikidict.close()
+    def run(self):
+        path="/mnt/data/dev/tdata/wiki_zh"
+        all_data=[]
+        print("开始处理文本")
+
+        # for line in tqdm( tfile.file_List(path, type='txt')):
+        #     text=  tfile.open_file(line)
+        #     self.one_text(text)
+    
+        tfile=tkit.File()
+        tt=tkit.Text()
+        flist=tfile.all_path(dirname=path)
+        # print("flist",flist)
+  
+        i=0
+        for file in  flist:
+            try:
+                print(file)
+                with open(file, 'r', encoding = 'utf-8') as data:
+                    for it in data:
+                        i=i+1
+                        # print(it)
+                        item=json.loads(it[:-1])
+                        # print(item)
+                        text=item['title']+"\n"+item['text']
+                        print("关键词",item['title'])
+                        print("已经标记：",self.i)
+                        self.keyword=item['title']
+                        self.one_text(item['text'])
+                    
+            except:
+                pass
 
 
+# FindKg().run()
 
-FindKg().run()
+# 构建wiki词典
+# FindKg().bulid_wiki_dict()
+FindKg().bulid_thuocl_dict()
 
 # text="""'夸奥蒂特兰是墨西哥的城市，由墨西哥州负责管辖，位于该国南部，面积42平方公里，海拔高度2,250米，主要经济活动有工业和商业，2010年人口1450万人"""
 # data=FindKg().auto_mark(text)

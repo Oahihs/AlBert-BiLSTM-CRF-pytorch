@@ -179,10 +179,13 @@ class Pre:
                     w=list(self.vocab)[word_id]
                     words.append((w,l))
 
-                # print('words',words)
+                print('words',words)
                 wd={"type":None,"words":None}
                 wd_list=[]
                 for w,l in words:
+                    # print(w)
+                    if w in ['[SEP]','[PAD]','[CLS]']:
+                        continue
                     # print(wd)
                     if l.startswith("B-"):
                         wd={"type":None,"words":None}

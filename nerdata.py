@@ -231,6 +231,43 @@ def run(input_files):
         print(f)
         tags=build_ner(f,tags)
 
+
+
+def saoke():
+    saoke=Tjson(file_path="data/SAOKE_DATA.json")
+    i=0
+    for line in saoke.load():
+        print("###"*20)
+        print(line)
+        print(line['natural'])
+        for logic in line['logic']:
+            print(logic)
+            print(logic['predicate'])
+            print(logic['qualifier'])
+            # print(logic['object'])
+            for object in logic['object']:
+                print(object)
+            print(logic['place'])
+            print(logic['time'])
+            
+            print(logic['subject'])
+        i=i+1
+        if i>10:
+            exit()
+
+
+# saoke()
+
+
+
+
+
+
+
+
+
+
+
     # with open("data/tag.txt","w") as f:
     #     f.write("\n".join(tags.keys()))
 
@@ -248,6 +285,9 @@ def run(input_files):
 
 
 # input_files=['/mnt/data/dev/github/数据处理工具/tool_data_processing/data/text/日本短尾猫.txt.anns']
+
+
+#处理标记过的数据
 path="/mnt/data/dev/github/数据处理工具/tool_data_processing/data/text/"
 tfile=tkit.File()
 input_files=tfile.file_List( path, type='anns')

@@ -23,9 +23,9 @@ class Config(object):
         self.rnn_hidden = 500
         self.bert_embedding = 768
         self.albert_embedding= 768
-        self.dropout1 = 0.5
-        self.dropout_ratio = 0.5
-        self.rnn_layer = 1
+        self.dropout1 = 0.2
+        self.dropout_ratio = 0.2
+        self.rnn_layer = 2
         self.lr = 0.0001
         self.lr_decay = 0.00001
         self.weight_decay = 0.00005

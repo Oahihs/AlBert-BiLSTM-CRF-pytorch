@@ -1,7 +1,7 @@
 # coding=utf-8
 # coding=utf-8
 import torch.nn as nn
-from transformers import AlbertModel
+from transformers import *
 from . import CRF
 from torch.autograd import Variable
 import torch

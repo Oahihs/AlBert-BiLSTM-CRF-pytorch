@@ -1,7 +1,7 @@
 # coding=utf-8
 # coding=utf-8
 import torch.nn as nn
-from pytorch_pretrained_bert import BertModel
+from transformers import *
 from . import CRF
 from torch.autograd import Variable
 import torch

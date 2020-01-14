@@ -27,27 +27,18 @@ long_description="""
 
 
 ~~~
-
 # 安装
-
-
 pip install tkitMarker  -i https://pypi.org/simple
 
 
 
 
 from tkitMarker import *
+content="柯基犬性格活泼可爱，但是饲养柯基犬会有着六个坏处，你还敢饲养柯基犬吗？"
+P=Pre()
+result=P.pre([content])
+print(result)
 
-def pre_one():
-
-    content="柯基犬性格活泼可爱，但是饲养柯基犬会有着六个坏处，你还敢饲养柯基犬吗？"
-
-    P=Pre()
-
-    result=P.pre([content])
-
-    print(result)
-    
 
 
 
@@ -60,7 +51,7 @@ def pre_one():
 """
 setup(
     name='tkitMarker',
-    version='0.0.1.6',
+    version='0.0.1.9.5',
     description='Terry Auto Marker',
     author='Terry Chan',
     author_email='napoler2008@gmail.com',
@@ -74,11 +65,12 @@ setup(
         'ipdb==0.12.2',
         # 'requests==2.22.0',
         'tkitFile==0.0.1.2',
-        'tkitWeb==0.0.1.0'
+        'tkitWeb==0.0.1.0',
+        'fire==0.2.1'
 
     ],
     # package_dir=[],
-    packages=['tkitMarker'])
+    packages=['tkitMarker','tkitMarker/model'])
     # install_requires=[
     #     # asn1crypto==0.24.0
     #     # beautifulsoup4==4.7.1

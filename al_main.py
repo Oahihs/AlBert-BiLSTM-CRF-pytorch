@@ -17,6 +17,8 @@ from tkitMarker import Pre
 def pre_one(**kwargs):
     # content="柯基犬性格活泼可爱，但是饲养柯基犬会有着六个坏处，你还敢饲养柯基犬吗？"
     # print(**kwargs)
+    config = Config()
+    config.update(**kwargs)
     P=Pre()
     result=P.pre([kwargs['text']])
     print(result)

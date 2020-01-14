@@ -1,2 +1,2 @@
-include tkitMarker/*
-include tkitMarker/model/*
+include tkitMarker
+include tkitMarker/model
