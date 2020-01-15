@@ -1,12 +1,13 @@
 # coding=utf-8
 import torch
-
+from .utils import Tjson,load_json
 class Config(object):
     def __init__(self):
         self.label_file = './data/tag.txt'
         self.train_file = './data/train.json'
         self.dev_file = './data/dev.json'
         self.test_file = './data/test.txt'
+        self.conf = 'tdata/albert_tiny/config.json'
         # self.vocab = './data/bert/vocab.txt'
         self.vocab = './data/albert/vocab.txt'
         self.max_length = 50
@@ -34,6 +35,12 @@ class Config(object):
         self.load_model = False
         self.load_path = None
         self.base_epoch = 10
+    def load_config(self):
+        try:
+            conf=  load_json(self.conf)
+            self.update_json(conf)
+        except:
+            pass
 
     def update(self, **kwargs):
         for k, v in kwargs.items():

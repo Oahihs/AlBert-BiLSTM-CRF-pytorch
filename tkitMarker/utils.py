@@ -152,6 +152,32 @@ def load_model(model, path='result', **kwargs):
     return model
 
 
+def save_config(config):
+    """
+    保存参数
+    """
+    # config = Config()
+    # print(config)
+    data={}
+    for key,value in config.__dict__.items():
+        # print(key,value)
+        data[key] = value
+
+    file = open(data['checkpoint']+"/config.json",'w',encoding='utf-8')
+    json.dump(data,file,ensure_ascii=False)
+    file.close()
+    # sc=Tjson(file_path=data['checkpoint']+"/config.json")
+    # sc.save([data])
+    # pass
+def load_json(path):
+    """
+    加载json文件
+    """
+    file = open(path,'r',encoding='utf-8')
+    s = json.load(file)
+    return s
+#     with open(self.file_path, 'r', encoding = 'utf-8') as f:
+#         line = json.dumps(item, ensure_ascii=False) 
 
 class Tjson:
   """
@@ -178,8 +204,13 @@ class Tjson:
     """
     with open(self.file_path, 'r', encoding = 'utf-8') as f:
         for line in f:
-            data=json.loads(line[:-1])
-            yield data
+            try:
+                # print(line)
+                data=json.loads(line[:-1])
+                # print(data)
+                yield data
+            except:
+                pass
 """
 #使用
 data=[{'a':'ess'}]

@@ -107,7 +107,7 @@ def mark_word_label(text,label_b,word,tp="实体"):
         elif len(p)==2:
             label_b[start_p]=auto_label(label_b[start_p],'B-'+tp)
             label_b[end_p]=  auto_label(label_b[end_p],'E-'+tp)
-    return label_b
+    return label_b,start_p
 # def mark_one(text,kgs):
 #     # root_label = ["O"]*len(text)
 #     print("###"*20)
@@ -180,46 +180,47 @@ def build_dataset_kg(train_file,type="all"):
         for n in item['spo_list']:
             predicate[n['predicate']]=[]
         kgs={}
+        # s_n=0
         for n in item['spo_list']:
             if kgs.get(n['subject'])==None:
                 kgs[n['subject']]={}
 
                 label= ["O"]*len(text)
-                w=n['subject']
-                label=mark_word_label(text,label,w,"实体")
+                # w=n['subject']
+                # label,s=mark_word_label(text,label,w,"实体")
 
-                w=n['predicate']
-                label=mark_word_label(text,label,w,"关系")
+                # w=n['predicate']
+                # label,s=mark_word_label(text,label,w,"关系")
 
                 w=n['object']
-                label=mark_word_label(text,label,w,"描述")
-
+                label,s=mark_word_label(text,label,w,"描述")
                 kgs[n['subject']][n['predicate']]={"objects":[n['object']],'label':label}
             elif  kgs[n['subject']].get(n['predicate'])==None:
 
                 label= ["O"]*len(text)
-                w=n['subject']
-                label=mark_word_label(text,label,w,"实体")
+                # w=n['subject']
+                # label,s=mark_word_label(text,label,w,"实体")
 
-                w=n['predicate']
-                label=mark_word_label(text,label,w,"关系")
+                # w=n['predicate']
+                # label,s=mark_word_label(text,label,w,"关系")
 
                 w=n['object']
-                label=mark_word_label(text,label,w,"描述")
-
+                label,s=mark_word_label(text,label,w,"描述")
                 kgs[n['subject']][n['predicate']]={"objects":[n['object']],'label':label}
             else:
 
                 label= kgs[n['subject']][n['predicate']]['label']
-                w=n['subject']
-                label=mark_word_label(text,label,w,"实体")
+                # w=n['subject']
+                # label,s=mark_word_label(text,label,w,"实体")
 
-                w=n['predicate']
-                label=mark_word_label(text,label,w,"关系")
+                # w=n['predicate']
+                # label,s=mark_word_label(text,label,w,"关系")
 
                 w=n['object']
-                label=mark_word_label(text,label,w,"描述")
+                label,s=mark_word_label(text,label,w,"描述")
                 kgs[n['subject']][n['predicate']]['objects'].append(n['object'])
+            # if s>=0:
+            #     s_n=s_n+1
         
         # mark_one(text,kgs)
         # print(kgs)
@@ -240,6 +241,67 @@ def build_dataset_kg(train_file,type="all"):
     f=int(len(data)*0.85)
     tjson_save.save(data=data[:f])
     dev_json_save.save(data=data[f:])
+
+
+
+
+
+
+def build_dataset_ner(train_file,type="all"):
+    """
+    百度训练集
+    转化为标注数据集
+    实体标注和关系词抽取训练集
+    train_file 文件路径
+    type="all" 或者mini 
+    mini
+
+    构建数据思路
+    多个描述合并到一个训练里
+
+    使用ner提取出句子中的实体
+
+    文本: ner+句子
+    label: ['K']*len(ner)+正常标记
+    """
+    tjson=Tjson(file_path=train_file)
+    all_save=Tjson(file_path="data/train_all.json")
+    # tjson_save=Tjson(file_path="data/ner_train.json")
+    # dev_json_save=Tjson(file_path="data/ner_dev.json")
+    tjson_save=Tjson(file_path="data/ner_train.json")
+    dev_json_save=Tjson(file_path="data/ner_dev.json")
+    data=[]
+    i=0
+    for item in tqdm(tjson.load()):
+        text= item['text']
+        label= ["O"]*len(text)
+        for n in item['spo_list']:
+            # print(n['subject'],n['predicate'])
+            
+            label,s1=mark_word_label(text,label,n['predicate'],"关系")
+            label,s2=mark_word_label(text,label,n['subject'],"实体")
+            if s1 >=0 and s2 >=0:
+                pass
+
+        one={'text':list(text),'label':label}
+        # print(one)
+        data.append(one)
+
+    if type=="all":
+        pass
+    elif type=="mini":
+        data=data[:200]
+    # all_save.save(data)
+    f=int(len(data)*0.85)
+    tjson_save.save(data=data[:f])
+    dev_json_save.save(data=data[f:])
+
+
+
+
+
+
+
 
 def build_dataset_gpt2(train_file,type="all"):
     """
@@ -280,6 +342,8 @@ def build_dataset_gpt2(train_file,type="all"):
 if __name__ == '__main__':
     # fire.Fire()
     train_files=["/mnt/data/dev/tdata/知识提取/train_data.json","/mnt/data/dev/tdata/知识提取/dev_data.json"]
+    # train_file="data/ner_train.json"
+    # dev_file="data/ner_dev.json"
     train_file="data/train.json"
     dev_file="data/dev.json"
     if os.path.exists(train_file) or os.path.exists(dev_file):
@@ -290,6 +354,9 @@ if __name__ == '__main__':
             # build_dataset(f,type="all")
             ###构建知识提取训练集
             build_dataset_kg(f,type="all")
+
+            #标记实体和关系词
+            # build_dataset_ner(f,type="all")
             # build_dataset_gpt2(f,type="mini")
 
 

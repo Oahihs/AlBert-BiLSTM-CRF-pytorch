@@ -2,10 +2,10 @@
 import torch
 import torch.nn as nn
 from torch.autograd import Variable
-from config import Config
+from tkitMarker import Config
 from tkitMarker import ALBERT_LSTM_CRF
 import torch.optim as optim
-from tkitMarker import load_vocab, read_corpus, load_model, save_model,build_input,Tjson
+from tkitMarker import load_vocab, read_corpus, load_model, save_model,build_input,Tjson,save_config,load_json
 from torch.utils.data import TensorDataset
 from torch.utils.data import DataLoader
 import fire
@@ -100,10 +100,19 @@ def test(**kwargs):
                 print('words',words)
 
 
+
 def train(**kwargs):
     config = Config()
+    if  kwargs['conf']:
+        # load_json(kwargs['conf'])
+        config.update_json({'conf':kwargs['conf']})
+    config.load_config()
     config.update(**kwargs)
+    save_config(config)
+
     print('当前设置为:\n', config)
+    # return
+
     if config.use_cuda:
         torch.cuda.set_device(config.gpu)
     print('loading corpus')
@@ -156,6 +165,8 @@ def train(**kwargs):
         loss_temp = dev(model, dev_loader, epoch, config)
         if loss_temp < eval_loss:
             save_model(model,epoch)
+            #保存参数
+            save_config(config)
 
 
 def dev(model, dev_loader, epoch, config):
