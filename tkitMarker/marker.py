@@ -5,7 +5,7 @@ from torch.autograd import Variable
 from .config import Config
 from .model import ALBERT_LSTM_CRF
 import torch.optim as optim
-from .utils import load_vocab, read_corpus, load_model, save_model,build_input,Tjson,load_json
+from .utils import load_vocab, read_corpus, load_model, save_model,build_input,Tjson
 from torch.utils.data import TensorDataset
 from torch.utils.data import DataLoader
 import fire
@@ -32,20 +32,25 @@ class Pre:
             "load_path":'tkitfiles/'+self.model_version+"/pytorch_model.bin",
             "load_model":True,
             "use_cuda":False,
-            # "max_length":200,
+            "max_length":50,
             'vocab':'tkitfiles/'+self.model_version+"/vocab.txt",
             'albert_path':'tkitfiles/'+self.model_version,
             'label_file':'tkitfiles/'+self.model_version+"/tag.txt",
-            'conf':'tkitfiles/'+self.model_version+'/config.json'
             # 'vocab':'tkitfiles/'+self.model_version+"/vocab.txt"
-        }  
-        config = Config()
-        config.update_json({'conf':self.args['conf']})
-        config.load_config()
-        config.update_json(self.args)
-        self.config=config
+             } 
+       
+
+        self.config= Config()
         # print( self.config)
+        self.config.update_json(self.args)  
+    def setconfig(self):
+
+        # config = Config()
+        # self.config.update_json(self.args)
+        self.config.update_json(self.args)
+        print( "更新配置参数",self.config)
         self.load_model()
+
     def download_model(self):
         """自动下载模型"""
         tfile=tkitFile.File()
@@ -182,7 +187,7 @@ class Pre:
                     w=list(self.vocab)[word_id]
                     words.append((w,l))
 
-                print('words',words)
+                # print('words',words)
                 wd={"type":None,"words":None}
                 wd_list=[]
                 for w,l in words:
