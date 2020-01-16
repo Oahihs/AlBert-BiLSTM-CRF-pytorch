@@ -3,10 +3,20 @@ from tkitMarker import *
 import tkitFile
 tfile=tkitFile.File()
 text="烈火如歌#作者#这不知名女作家明晓溪经典小说《烈火如歌》已改编成电视剧，并于3月1日开播，主演有周渝民、迪丽热巴、张彬彬、刘芮麟等，人们对剧中的两位新疆美女充满了期待"
+# P=Pre()
+# P.args['dropout1']=0.2
+# P.args['dropout_ratio']=0.2
+# P.args['rnn_layer']=2
+
 P=Pre()
-P.args['dropout1']=0.2
-P.args['dropout_ratio']=0.2
-P.args['rnn_layer']=2
+P.args['conf']="tkitfiles/v0.1/config.json"
+P.args['load_path']="tkitfiles/v0.1/pytorch_model.bin"
+P.args['vocab']="tkitfiles/v0.1/vocab.txt"
+P.args['label_file']="tkitfiles/v0.1/tag.txt"
+P.args['max_length']=50
+P.setconfig()
+
+
 tj=tkitFile.Json(file_path='data/dev.json')
 i=0
 n=0

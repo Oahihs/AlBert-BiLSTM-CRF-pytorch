@@ -151,6 +151,46 @@ class Pre:
         input_loader = DataLoader(input_dataset, shuffle=True, batch_size=self.config.batch_size)
         return input_loader
 
+    def pre_words(self,words):
+        wd={"type":None,"words":None}
+        wd_list=[]
+        for w,l in words:
+            # print(w)
+            if w in ['[SEP]','[PAD]','[CLS]']:
+                continue
+            # print(wd)
+            if l.startswith("B-"):
+                wd={"type":None,"words":None}
+                wd_aa=[]
+                wd["type"]=l.split("B-")[1]
+                wd_aa.append(w)
+            elif l.startswith("M-"):
+                if wd["type"]==l.split("M-")[1]:
+                    wd_aa.append(w)
+            elif l.startswith("E-"):
+                if wd["type"]==l.split("E-")[1] and  wd["type"] !=None:
+                    wd_aa.append(w)
+                    wd['words']=''.join(wd_aa)
+                    wd_list.append(wd)
+                    # print(wd)
+                
+            elif l.startswith("S-"):
+                wd={"type":None,"words":None}
+                wd_aa=[]
+                wd["type"]=l.split("S-")[1]
+                wd_aa.append(w)
+                wd_list.append(wd)
+                # print(wd)
+                # wd={"type":None,"words":''.join(wd_aa)}
+                wd['words']=''.join(wd_aa)
+                
+            else:
+                # wd_aa=[]
+                # wd={"type":None,"words":None}
+                pass
+        return wd_list
+
+
     def pre(self,content_array=[]):
         """
         执行预测
@@ -186,50 +226,13 @@ class Pre:
                     l=list(label_dic)[id]
                     w=list(self.vocab)[word_id]
                     words.append((w,l))
-
+                wd_list= self.pre_words(words)
                 # print('words',words)
-                wd={"type":None,"words":None}
-                wd_list=[]
-                for w,l in words:
-                    # print(w)
-                    if w in ['[SEP]','[PAD]','[CLS]']:
-                        continue
-                    # print(wd)
-                    if l.startswith("B-"):
-                        wd={"type":None,"words":None}
-                        wd_aa=[]
-                        wd["type"]=l.split("B-")[1]
-                        wd_aa.append(w)
-                    elif l.startswith("M-"):
-                        if wd["type"]==l.split("M-")[1]:
-                            wd_aa.append(w)
-                    elif l.startswith("E-"):
-                        if wd["type"]==l.split("E-")[1] and  wd["type"] !=None:
-                            wd_aa.append(w)
-                            wd['words']=''.join(wd_aa)
-                            wd_list.append(wd)
-                            # print(wd)
-                     
-                    elif l.startswith("S-"):
-                        wd={"type":None,"words":None}
-                        wd_aa=[]
-                        wd["type"]=l.split("S-")[1]
-                        wd_aa.append(w)
-                        wd_list.append(wd)
-                        # print(wd)
-                        # wd={"type":None,"words":''.join(wd_aa)}
-                        wd['words']=''.join(wd_aa)
-                        
-                    else:
-                        # wd_aa=[]
-                        # wd={"type":None,"words":None}
-                        pass
-
+    
                 # print('wd_list',wd_list)
                 # print(i)
                 output.append((content_dict[i],wd_list))
         return output
-
 
 
 

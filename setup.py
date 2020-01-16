@@ -51,7 +51,7 @@ print(result)
 """
 setup(
     name='tkitMarker',
-    version='0.0.1.9.8',
+    version='0.0.1.9.9',
     description='Terry Auto Marker',
     author='Terry Chan',
     author_email='napoler2008@gmail.com',
