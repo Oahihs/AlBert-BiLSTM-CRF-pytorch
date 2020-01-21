@@ -59,7 +59,7 @@ def read_corpus(path, max_length, label_dic, vocab):
             label = label[0:(max_length-2)]
 
         #自动屏蔽百分之15的数据
-        for num in sample(range(1,len(tokens)),0.15*len(tokens)):
+        for num in sample(range(1,len(tokens)),int(0.15*len(tokens))):
             tokens[num] ="[MASK]"
 
         tokens_f =['[CLS]'] + tokens + ['[SEP]']

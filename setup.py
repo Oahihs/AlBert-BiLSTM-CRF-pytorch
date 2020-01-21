@@ -43,15 +43,16 @@ print(result)
 
 
 
+# 更新日志
 
 
-
-
+# 0.0.1.20'
+加入随机屏蔽15%的文字
 
 """
 setup(
     name='tkitMarker',
-    version='0.0.1.9.9',
+    version='0.0.1.20',
     description='Terry Auto Marker',
     author='Terry Chan',
     author_email='napoler2008@gmail.com',
