@@ -5,6 +5,9 @@ import datetime
 import unicodedata
 import json
 
+from random import sample
+
+
 class InputFeatures(object):
     def __init__(self, input_id, label_id, input_mask):
         self.input_id = input_id
@@ -54,6 +57,11 @@ def read_corpus(path, max_length, label_dic, vocab):
         if len(tokens) > max_length-2:
             tokens = tokens[0:(max_length-2)]
             label = label[0:(max_length-2)]
+
+        #自动屏蔽百分之15的数据
+        for num in sample(range(1,len(tokens)),0.15*len(tokens)):
+            tokens[num] ="[MASK]"
+
         tokens_f =['[CLS]'] + tokens + ['[SEP]']
         label_f = ["<start>"] + label + ['<eos>']
         input_ids = [int(vocab[i]) if i in vocab else int(vocab['[UNK]']) for i in tokens_f]

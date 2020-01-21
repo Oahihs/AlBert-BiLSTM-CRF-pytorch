@@ -12,6 +12,7 @@ import random
 from tqdm import tqdm
 import os
 # import fire
+from random import shuffle
 
 def build_dataset(train_file,type="all"):
     """
@@ -245,6 +246,45 @@ def build_dataset_kg(train_file,type="all"):
 
 
 
+def build_dataset_kg_check(train_file,type="all"):
+    """
+    百度训练集转化为判断抽取知识是否是合理的
+    """
+    tjson=Tjson(file_path=train_file)
+    # all_save=Tjson(file_path="data/train_all.json")
+    tjson_save=Tjson(file_path="data/kg_check/train.json")
+    dev_json_save=Tjson(file_path="data/kg_check/dev.json")
+    data=[]
+    i=0
+    for item in tqdm(tjson.load()):
+        for n in item['spo_list']:
+            kg_one=[n['subject'],n['predicate'],n['object']]
+            kg=' [KG] '+",".join(kg_one)+" [/KG] "+ item['text']
+            one={
+                'sentence':kg,
+                'label':1
+            }
+            data.append(one)
+            kg_one_list=list(",".join(kg_one))
+            shuffle(kg_one_list)
+            # print(kg_one_list)
+            if kg_one_list != list(",".join(kg_one)):
+                kg=' [KG] '+"".join(kg_one_list)+" [/KG] "+ item['text']
+                one={
+                    'sentence':kg,
+                    'label':0
+                }
+                data.append(one)
+    # print(data[10:])
+    if type=="all":
+        pass
+    elif type=="mini":
+        data=data[:200]
+    # all_save.save(data)
+    f=int(len(data)*0.85)
+    tjson_save.save(data=data[:f])
+    dev_json_save.save(data=data[f:])
+
 
 
 def build_dataset_ner(train_file,type="all"):
@@ -271,27 +311,33 @@ def build_dataset_ner(train_file,type="all"):
     tjson_save=Tjson(file_path="data/ner_train.json")
     dev_json_save=Tjson(file_path="data/ner_dev.json")
     data=[]
-    i=0
+ 
     for item in tqdm(tjson.load()):
         text= item['text']
         label= ["O"]*len(text)
+        ner={}
         for n in item['spo_list']:
-            # print(n['subject'],n['predicate'])
-            
-            label,s1=mark_word_label(text,label,n['predicate'],"关系")
-            label,s2=mark_word_label(text,label,n['subject'],"实体")
-            if s1 >=0 and s2 >=0:
-                pass
-
-        one={'text':list(text),'label':label}
-        # print(one)
-        data.append(one)
+            try:
+                ner[n['subject']].append(n['predicate'])
+            except:
+                ner[n['subject']]=[n['predicate']]
+        for nr in ner:
+            s=0
+            for n in ner[nr]:
+                label,s1=mark_word_label(text,label,n,"关系")
+                if s1>=0:
+                    s=s+1
+            if s>0:
+                one={'text':list(nr+'#'+text),'label':['K']*len(nr)+['X']+label}
+                data.append(one)
+                # print(one)
 
     if type=="all":
         pass
     elif type=="mini":
         data=data[:200]
     # all_save.save(data)
+    print("总共数据",len(data))
     f=int(len(data)*0.85)
     tjson_save.save(data=data[:f])
     dev_json_save.save(data=data[f:])
@@ -344,20 +390,21 @@ if __name__ == '__main__':
     train_files=["/mnt/data/dev/tdata/知识提取/train_data.json","/mnt/data/dev/tdata/知识提取/dev_data.json"]
     # train_file="data/ner_train.json"
     # dev_file="data/ner_dev.json"
-    train_file="data/train.json"
-    dev_file="data/dev.json"
-    if os.path.exists(train_file) or os.path.exists(dev_file):
-        print("文件已经存在")
-        print("请手动删除")
-    else:
-        for f in train_files:
-            # build_dataset(f,type="all")
-            ###构建知识提取训练集
-            build_dataset_kg(f,type="all")
+    # train_file="data/train.json"
+    # dev_file="data/dev.json"
+    # if os.path.exists(train_file) or os.path.exists(dev_file):
+    #     print("文件已经存在")
+    #     print("请手动删除")
+    # else:
+    for f in train_files:
+        # build_dataset(f,type="all")
+        ###构建知识提取训练集
+        # build_dataset_kg(f,type="all")
 
-            #标记实体和关系词
-            # build_dataset_ner(f,type="all")
-            # build_dataset_gpt2(f,type="mini")
+        #标记实体和关系词
+        # build_dataset_ner(f,type="all")
+        # build_dataset_gpt2(f,type="mini")
+        build_dataset_kg_check(f,type="all")
 
 
 
